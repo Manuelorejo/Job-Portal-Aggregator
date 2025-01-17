@@ -8,8 +8,8 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-
-
+search_term = "Data Scientist"
+location = "Lagos"
 #search_term = input('What role are you looking for? ')
 #location = input('Which state do you want to work in? ')
 
@@ -44,9 +44,23 @@ def MyJobMag(search_term,location):
                 
                 job_link =  base_url + job.h2.a['href']
                 job_post['Job Link'] = job_link
-                job_post["Job Source"] = "MyJobMag.com"
             except:
                 continue
+            
+            try:
+                job_response = requests.get(job_link)
+                job_doc = BeautifulSoup(job_response.content,"html.parser")
+                job_doc = job_doc.find("div",class_ ="read-left-section")
+                job_desc = job_doc.find("ul", class_ = "job-key-info")
+                job_type = job_desc.find("li")
+                job_type = job_type.find("span", class_ = "jkey-info")
+                job_type = job_type.text
+                
+                
+                job_post['Job Mode'] = job_type
+                
+            except:
+                job_post['Job Mode'] = "Not Specified"
             
             job_list.append(job_post)
         return job_list
@@ -71,4 +85,4 @@ def MyJobMag(search_term,location):
                 print("\n")'''
         
         
-#MyJobMag(search_term, location)        
+MyJobMag(search_term, location)        

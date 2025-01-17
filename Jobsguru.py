@@ -29,7 +29,7 @@ def Jobsguru(search_term):
                
                try:
                    job_title = job.h2.text.strip()
-                   job_post['Job title'] = job_title
+                   job_post['Job Title'] = job_title
                    
                    job_link = job.a['href'] 
                    job_post['Job Link'] = job_link
@@ -56,7 +56,6 @@ def Jobsguru(search_term):
                        job_mode = job_meta.split("\n")[1]
                        job_mode = job_mode.split(":")[-1].strip()
                        job_post['Job Mode'] = job_mode
-                       job_post['Job Source'] = "Jobsguru.com"
                        
                    
                    except:

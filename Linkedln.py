@@ -48,6 +48,7 @@ def linkedln(title,location):
     for job_id in id_list:
         # Construct the URL for each job using the job ID
         job_url = f"https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{job_id}"
+        temp_job_url = f"https://www.linkedin.com/jobs/search/?currentJobId={job_id}"
         
         # Send a GET request to the job URL and parse the reponse
         job_response = requests.get(job_url)
@@ -72,7 +73,7 @@ def linkedln(title,location):
             
             
         try:
-            job_post["Job Link"] = job_url
+            job_post["Job Link"] = temp_job_url
             job_post['Job Source'] = "Linkedln"
         except:
             continue
