@@ -56,6 +56,7 @@ def Jobsguru(search_term):
                        job_mode = job_meta.split("\n")[1]
                        job_mode = job_mode.split(":")[-1].strip()
                        job_post['Job Mode'] = job_mode
+                       job_post['Job Source'] = "Jobgurus.com"
                        
                    
                    except:

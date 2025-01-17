@@ -74,7 +74,7 @@ def linkedln(title,location):
             
         try:
             job_post["Job Link"] = temp_job_url
-            job_post['Job Source'] = "Linkedln"
+            job_post['Job Source'] = "LinkedIn"
         except:
             continue
         

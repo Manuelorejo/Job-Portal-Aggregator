@@ -61,6 +61,7 @@ def MyJobMag(search_term,location):
                 
             except:
                 job_post['Job Mode'] = "Not Specified"
+                job_post['Job Source'] = "MyJobMag.com"
             
             job_list.append(job_post)
         return job_list

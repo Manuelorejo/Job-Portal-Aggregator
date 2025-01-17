@@ -144,6 +144,7 @@ def hotnigerianjobs(search_term):
                 employment_type = "Not Specified"
             
             job_post['Job Mode'] = employment_type
+            job_post['Job Source'] = "hotnigerianjobs.com"
             
             
             
