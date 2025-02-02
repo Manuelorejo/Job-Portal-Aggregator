@@ -4,6 +4,7 @@ from Linkedln import linkedln
 from Jobsguru import Jobsguru
 from MyJobMag import MyJobMag
 from hotnigerianjobs import hotnigerianjobs
+from Jobberman import jobberman
 
 # Streamlit app
 def main():
@@ -48,6 +49,12 @@ def main():
                     job_list.extend(hotnigerianjobs_results)
                 except Exception as e:
                     st.warning(f"Error fetching HotNigerianJobs jobs: {e}")
+                    
+                try:
+                    jobberman_results = jobberman(search_term,location)
+                    job_list.extend(jobberman_results)
+                except Exception as e:
+                    st.warning(f"Error fetching Jobberman jobs: {e}")
 
             # Display job listings
             if job_list:
