@@ -5,18 +5,23 @@ Created on Wed Jan  8 14:23:02 2025
 @author: Oreoluwa
 """
 
+#This block of code consists of import statements
 import requests
 from bs4 import BeautifulSoup
 #search_term = input('What role are you looking for? ')
 
+
+#This function scrapes the website "Jobgurus.com" and returns the results
 def Jobsguru(search_term):
 
-    base_url = 'https://www.jobgurus.com.ng/'
+    
     url = f'https://www.jobgurus.com.ng/jobs?search_keyword={search_term}&specialization=&work_level='
     
-    response = requests.get(url)
-    
+    response = requests.get(url)     
     job_list = []
+    
+    
+    #This block of code scrapes the website and finds the Job Title and Job Link of each job
     if response:
            soup = BeautifulSoup(response.content,'html.parser') 
            #document = soup.find("div", class_ = "main-content-section")
@@ -25,7 +30,8 @@ def Jobsguru(search_term):
           # print(job)
           
            for job in jobs:
-               job_post = {}
+               # This creates a dictionary to store job details
+               job_post = {} 
                
                try:
                    job_title = job.h2.text.strip()
@@ -38,6 +44,7 @@ def Jobsguru(search_term):
                except:
                    continue
                
+                #This block of code scrapes the url of each individual job and fetches the Job Location and Job Mode of each job
                job_response = requests.get(job_link)
                if job_response:
                    job_soup = BeautifulSoup(job_response.content, "html.parser")
@@ -56,32 +63,15 @@ def Jobsguru(search_term):
                        job_mode = job_meta.split("\n")[1]
                        job_mode = job_mode.split(":")[-1].strip()
                        job_post['Job Mode'] = job_mode
-                       job_post['Job Source'] = "Jobgurus.com"
+                       job_post['Job Source'] = 'Jobgurus.com'
                        
                    
                    except:
                        continue
                
                  
-               
+               #This block of code appends all the results of a list and returns the list at the end of the loop 
                job_list.append(job_post)
            return job_list
                
     
-    
-               
-    '''else:
-        print("Could not scrape")
-    
-    counter = 1    
-    for job in job_list:
-        print("JOB " + str(counter))
-        counter += 1
-        
-        for k,v in job.items():
-            print(k, ": ",v)
-            print("\n")'''
-            
-
-
-#Jobsguru(search_term)

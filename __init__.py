@@ -1,71 +1,69 @@
-# streamlit_app.py
-import streamlit as st
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Jan  8 22:36:18 2025
+
+@author: Oreoluwa
+"""
+
+# The following block of code consists of the import statements
+import json
 from Linkedln import linkedln
 from Jobsguru import Jobsguru
 from MyJobMag import MyJobMag
 from hotnigerianjobs import hotnigerianjobs
 from Jobberman import jobberman
 
-# Streamlit app
+def normalize_value(value):
+    """Convert empty or 'Not Specified' values to null"""
+    if not value or value == "Not Specified":
+        return None
+    return value
+
 def main():
-    st.title("Job Aggregator")
-    st.markdown(
-        "Welcome to the Job Aggregator! Search for jobs across multiple websites with ease."
-    )
+    # The following block of code is for initialization of lists and variables
+    job_list = []
+    search_term = input("What role are you looking for? ")
+    location = input("Where do you want to work? ")
+
+    # The following block of code is for function calls
+    linkedln_results = linkedln(search_term, location)
+    Jobsguru_results = Jobsguru(search_term)
+    MyJobMag_results = MyJobMag(search_term, location)
+    hotnigerianjobs_results = hotnigerianjobs(search_term)
+    jobberman_results = jobberman(search_term, location)
+
+    # The following block of code takes the results of the function calls and appends them to the same list
+    for i in linkedln_results:
+        job_list.append(i)
     
-    # Inputs for search term and location
-    search_term = st.text_input("Enter the job title or keyword:", "")
-    location = st.text_input("Enter the location (optional):", "")
+    for i in Jobsguru_results:
+        job_list.append(i)
     
-    # Search button
-    if st.button("Search"):
-        if not search_term:
-            st.error("Please enter a job title or keyword to search.")
-        else:
-            # Gather job listings
-            with st.spinner("Fetching job listings..."):
-                job_list = []
+    for i in MyJobMag_results:
+        job_list.append(i)
+    
+    for i in hotnigerianjobs_results:
+        job_list.append(i)
 
-                try:
-                    linkedln_results = linkedln(search_term, location)
-                    job_list.extend(linkedln_results)
-                except Exception as e:
-                    st.warning(f"Error fetching LinkedIn jobs: {e}")
+    for i in jobberman_results:
+        job_list.append(i)
 
-                try:
-                    Jobsguru_results = Jobsguru(search_term)
-                    job_list.extend(Jobsguru_results)
-                except Exception as e:
-                    st.warning(f"Error fetching Jobsguru jobs: {e}")
+    # Format the job list into the required JSON structure
+    formatted_jobs = []
+    for job in job_list:
+        formatted_job = {
+            "job_title": normalize_value(job.get('Job Title')),
+            "job_location": normalize_value(job.get('Job Location')),
+            "job_link": normalize_value(job.get('Job Link')),
+            "job_mode": normalize_value(job.get('Job Mode', job.get('Job_Mode'))),
+            "job_source": normalize_value(job.get('Job Source', job.get('Source')))
+        }
+        formatted_jobs.append(formatted_job)
 
-                try:
-                    MyJobMag_results = MyJobMag(search_term, location)
-                    job_list.extend(MyJobMag_results)
-                except Exception as e:
-                    st.warning(f"Error fetching MyJobMag jobs: {e}")
-
-                try:
-                    hotnigerianjobs_results = hotnigerianjobs(search_term)
-                    job_list.extend(hotnigerianjobs_results)
-                except Exception as e:
-                    st.warning(f"Error fetching HotNigerianJobs jobs: {e}")
-                    
-                try:
-                    jobberman_results = jobberman(search_term,location)
-                    job_list.extend(jobberman_results)
-                except Exception as e:
-                    st.warning(f"Error fetching Jobberman jobs: {e}")
-
-            # Display job listings
-            if job_list:
-                st.success(f"Found {len(job_list)} jobs for '{search_term}' in '{location}'.")
-                for idx, job in enumerate(job_list, 1):
-                    st.markdown(f"### Job {idx}")
-                    for key, value in job.items():
-                        st.markdown(f"**{key}:** {value}")
-                    st.markdown("---")
-            else:
-                st.info("No jobs found. Try refining your search term or location.")
+    # Output the JSON with the required format
+    json_output = {"jobs": formatted_jobs}
+    print(json.dumps(json_output, indent=2))
+    return json_output
 
 if __name__ == "__main__":
     main()

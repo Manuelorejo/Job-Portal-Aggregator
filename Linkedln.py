@@ -17,13 +17,14 @@ from bs4 import BeautifulSoup
 
 def linkedln(title,location):
     start = 0  # Starting point for pagination
+    
     # Construct the URL for LinkedIn job search
     list_url = f"https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords={title}&location={location}&start={start}"
     
     # Send a GET request to the URL and store the response
     response = requests.get(list_url)
     
-    #Get the HTML, parse the response and find all list items(jobs postings)
+    #This block of code gets the HTML, parses the response and finds all list items(jobs postings)
     list_data = response.text
     list_soup = BeautifulSoup(list_data, "html.parser")
     page_jobs = list_soup.find_all("li")
@@ -31,7 +32,8 @@ def linkedln(title,location):
         
     #Create an empty list to store the job postings
     id_list = []
-    #Itetrate through job postings to find job ids
+    
+    #This block of code iterates through job postings to find job ids
     try:
         for job in page_jobs:
             base_card_div = job.find("div", {"class": "base-card"})
@@ -44,17 +46,18 @@ def linkedln(title,location):
     # Initialize an empty list to store job information
     job_list = []
     
-    # Loop through the list of job IDs and get each URL
+    # This block of code loops through the list of job IDs and gets each URL
     for job_id in id_list:
-        # Construct the URL for each job using the job ID
+        
+        # This constructs the URL for each job using the job ID
         job_url = f"https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{job_id}"
         temp_job_url = f"https://www.linkedin.com/jobs/search/?currentJobId={job_id}"
         
-        # Send a GET request to the job URL and parse the reponse
+        # This sends a GET request to the job URL and parse the reponse
         job_response = requests.get(job_url)
         job_soup = BeautifulSoup(job_response.text, "html.parser")
         
-         # Create a dictionary to store job details
+         # This creates a dictionary to store job details
         job_post = {}
         
         # Try to extract and store the job title
@@ -65,7 +68,7 @@ def linkedln(title,location):
             
         
        
-        # Try to extract and store the number of applicants
+        # This block of code tries to extract and store the number of applicants
         try:
             job_post["Job Location"] = location
         except:
@@ -74,24 +77,12 @@ def linkedln(title,location):
             
         try:
             job_post["Job Link"] = temp_job_url
-            job_post['Job Source'] = "LinkedIn"
         except:
             continue
         
-            
-        # Append the job details to the job_list
+        job_post['Job_Mode'] = "Not Specified"
+        job_post['Job Source'] = "LinkedIn.com"  
+        #This block of code appends all the results of a list and returns the list at the end of the loop
         job_list.append(job_post)
     return job_list
         
-    '''counter = 1    
-    for job in job_list:
-        print("JOB " + str(counter))
-        counter += 1
-        
-        for k,v in job.items():
-            print(k, ": ",v)
-            print("\n")'''    
-    
-
-
-    

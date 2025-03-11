@@ -4,15 +4,16 @@ Created on Mon Jan  6 16:33:41 2025
 
 @author: Oreoluwa
 """
-
+#The following block of code consists of import statements
 from bs4 import BeautifulSoup
 import requests
 import re
 from datetime import datetime
 
-search_term = "Data Scientist"
-format_str = "%d/%m/%Y"   
 
+   
+
+#The following block of code defines a function for mapping months to their respective numbers
 def month_mapping(month):
     if month == "january":
         return "01"
@@ -50,6 +51,9 @@ def month_mapping(month):
     elif month == "december":
         return "12"
 
+
+#The following block of code is a function that takes the date format from the website and converts it to a "datetime" object
+format_str = "%d/%m/%Y"
 def date_conversion(date):
     try:
         
@@ -72,6 +76,7 @@ def date_conversion(date):
 
 
 
+#The following block of code is a function that scrapes the website "hotnigerianjobs.com" for the search term
 def hotnigerianjobs(search_term):
     #base_url = "https://www.hotnigerianjobs.com/"
     #location = input("Where do you want to work? ")
@@ -79,21 +84,22 @@ def hotnigerianjobs(search_term):
     
     response = requests.get(url)
     
+    #The following block of code is a function that extracts the location of a job by searching for the string "Is located in * State"
     def extract_text(text):
     # Define the pattern
         pattern = r"is located in (.*?) State"
         
-        # Search for the pattern in the text
+        # This line searchs for the pattern in the text
         match = re.search(pattern, text)
         
         if match:
-            #extracted_text = match.group(0)  # Extracts the entire match (including "State")
             extracted_location = match.group(1)  # Extracts only the location (excluding "State")
             return(f"{extracted_location} State")
         else:
             return("Location Not Available.")
     
     
+    #This block of code scrapes the website and finds the Job Title, Job Link and Job Locations of each job
     job_list = []
     if response:
         
@@ -104,6 +110,7 @@ def hotnigerianjobs(search_term):
         jobs = document.find_all("div",class_ = "mycase")
         
         for job in jobs:
+            # This creates a dictionary to store job details
             job_post = {}
             
             try:
@@ -129,6 +136,7 @@ def hotnigerianjobs(search_term):
                 continue
                 
             
+            #This block of code scrapes each individual job's url and finds the mode of each job
             job_response = requests.get(job_link)
             job_soup = BeautifulSoup(job_response.content, 'html.parser')
             job_document = job_soup.find_all("div",class_ = "mycase4")[-2]
@@ -144,12 +152,11 @@ def hotnigerianjobs(search_term):
                 employment_type = "Not Specified"
             
             job_post['Job Mode'] = employment_type
-            job_post['Job Source'] = "hotnigerianjobs.com"
             
             
             
-            '''The following block of code parses the application closing date listed on the website and
-            compares it with the current date, if the job is outdated, then it will be removed from the job list'''
+            #The following block of code parses the application closing date listed on the website and
+            #compares it with the current date, if the job is outdated, then it will be removed from the job list
             
             application_closing_date = job_document.find_all("div")[-2].text.split("\n")[1]
             if application_closing_date == "Not Specified":
@@ -167,32 +174,14 @@ def hotnigerianjobs(search_term):
                 else:
                     job_post['Application Closing Date'] = application_closing_date
                     pass
+            job_post['Job Source'] = "hotnigerianjobs.com"
                 
             
                 
-            #if type(job_title) != type(None) and type(job_link) != type(None) and type(job_location) != type(None):
-              
-                
-                
-               
-                
-                
+            
+  
+            #This block of code appends all the results of a list and returns the list at the end of the loop
             job_list.append(job_post)
         return job_list
         
-    '''else:
-        print("Couldn't fetch")
     
-    counter = 1
-    for job in job_list:
-        if len(job) == 0:
-            job_list.remove(job)
-        else:
-            print("Job " + str(counter))
-            for k,v in job.items():
-                print(k, ": ",v)
-            print("\n")
-            counter += 1'''
-    
-    
-hotnigerianjobs(search_term)

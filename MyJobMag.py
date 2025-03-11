@@ -4,23 +4,23 @@ Created on Wed Jan  8 13:20:55 2025
 
 @author: Oreoluwa
 """
+#This block of code consists of import statements
 import requests
 from bs4 import BeautifulSoup
-import re
-
-search_term = "Data Scientist"
-location = "Lagos"
-#search_term = input('What role are you looking for? ')
-#location = input('Which state do you want to work in? ')
 
 
+
+
+#This function scrapes the website "MyJobMag.com" and returns the results
 def MyJobMag(search_term,location):
     base_url = 'https://www.myjobmag.com/'
     url = f'https://www.myjobmag.com/search/jobs?q={search_term}&location={location}&location-sinput={location}'
     
     response = requests.get(url)
-    
     job_list = []
+    
+    
+    #This block of code scrapes the website and finds the Job Title, Job Location and Job Link of each job
     if response:
         soup = BeautifulSoup(response.content,'html.parser')
         document = soup.find("div",class_ = 'content-wrap2' )
@@ -28,7 +28,10 @@ def MyJobMag(search_term,location):
         
         
         for job in jobs:
+            # This creates a dictionary to store job details
             job_post = {}
+            
+            
             try:
                 job_title = job.h2.text.strip()
                 job_post['Job Title'] = job_title
@@ -47,6 +50,8 @@ def MyJobMag(search_term,location):
             except:
                 continue
             
+            
+            #This block of code scrapes each individual job's url and finds the mode of each job
             try:
                 job_response = requests.get(job_link)
                 job_doc = BeautifulSoup(job_response.content,"html.parser")
@@ -61,29 +66,12 @@ def MyJobMag(search_term,location):
                 
             except:
                 job_post['Job Mode'] = "Not Specified"
-                job_post['Job Source'] = "MyJobMag.com"
             
+            job_post['Job Source'] = "MyJobMag.com"
+            
+                
+            #This block of code appends all the results of a list and returns the list at the end of the loop
             job_list.append(job_post)
         return job_list
         
        
-        
-    '''else:
-        print("Could not scrape")
-    
-    if len(job_list) == 0:
-        print("No jobs available")
-    
-    else:
-        
-        
-        counter = 1    
-        for job in job_list:
-            print("JOB " + str(counter))
-            counter += 1
-            for k,v in job.items():
-                print(k, ":", v)
-                print("\n")'''
-        
-        
-MyJobMag(search_term, location)        

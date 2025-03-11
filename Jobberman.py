@@ -49,7 +49,7 @@ def jobberman(search_term,location):
         job_post['Source'] = "Jobberman.com"
         
         job_list.append(job_post)
-        return job_list
+    return job_list
     
  
 
